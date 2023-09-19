@@ -13,4 +13,5 @@ Your job here is to quickly (don't spend more than an hour on this) **refactor t
 ## Features
 * The app exposes lists, that gather todo items.
 * The lists have unique names
+* Each list is given a `isEven` property saying ... well... if it's even or not.
 
