@@ -68,6 +68,15 @@ app.post('/api/lists', async (req: Request, res: Response) => {
             name,
             isEven: isEven((await TodoList.find()).length)
         });
+
+        const exists = await TodoList.find({
+            name: name
+        })
+
+        if (exists) {
+            res.status(201).json("already exists")
+        }
+
         await newList.save();
         res.status(201).json(newList);
     } catch (error) {
