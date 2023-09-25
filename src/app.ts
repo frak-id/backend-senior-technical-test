@@ -45,7 +45,7 @@ const TodoListSchema: Schema = new mongoose.Schema({
             type: Date,
             default: Date.now,
         },
-    }], // Embed the TodoSchema as an array of todos
+    }]
 });
 
 const TodoList = mongoose.model<ITodoList>('TodoList', TodoListSchema);
@@ -61,7 +61,7 @@ app.get('/api/lists', async (req: Request, res: Response) => {
     }
 });
 
-app.post('/api/lists', async (req: Request, res: Response) => {
+app.post('/api/list', async (req: Request, res: Response) => {
     const { name } = req.body;
     try {
         const newList: ITodoList = new TodoList({
@@ -79,6 +79,34 @@ app.post('/api/lists', async (req: Request, res: Response) => {
 
         await newList.save();
         res.status(201).json(newList);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+});
+
+app.post('/api/lists', async (req: Request, res: Response) => {
+    const { names } = req.body;
+    try {
+        const newLists = []
+        for (const name of names) {
+            const newList: ITodoList = new TodoList({
+                name,
+                isEven: isEven((await TodoList.find()).length)
+            });
+    
+            const exists = await TodoList.find({
+                name: name
+            })
+    
+            if (exists) {
+                res.status(201).json("already exists")
+            }
+    
+            await newList.save();
+            newLists.push(newList)
+        }
+        res.status(201).json(newLists);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server Error' });
